@@ -28,7 +28,11 @@ public class HomeController : Controller
         {
             try
             {
-                jwtPayload = await GoogleJsonWebSignature.ValidateAsync(jwtStr);
+                var valSettings = new GoogleJsonWebSignature.ValidationSettings()
+                {
+                    Audience = new string[] { "/projects/72643967898/global/backendServices/1079754107036193628" },
+                };
+                jwtPayload = await GoogleJsonWebSignature.ValidateAsync(jwtStr, valSettings);
             }
             catch (InvalidJwtException ex)
             {
