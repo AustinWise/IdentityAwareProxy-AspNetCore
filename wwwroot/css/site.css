@@ -26,4 +26,5 @@ body {
   border-color: grey;
   padding: 0.2em;
   max-width: 500px;
+  overflow-wrap: break-word;
 }
