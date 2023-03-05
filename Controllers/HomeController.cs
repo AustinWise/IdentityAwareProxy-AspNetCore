@@ -28,11 +28,13 @@ public class HomeController : Controller
         {
             try
             {
-                var valSettings = new GoogleJsonWebSignature.ValidationSettings()
+                var valSettings = new SignedTokenVerificationOptions()
                 {
-                    Audience = new string[] { "/projects/72643967898/global/backendServices/1079754107036193628" },
+                    CertificatesUrl = "https://www.gstatic.com/iap/verify/public_key-jwk",
                 };
-                jwtPayload = await GoogleJsonWebSignature.ValidateAsync(jwtStr, valSettings);
+                valSettings.TrustedAudiences.Add("/projects/72643967898/global/backendServices/1079754107036193628");
+                valSettings.TrustedIssuers.Add("https://cloud.google.com/iap");
+                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync(jwtStr, valSettings);
             }
             catch (InvalidJwtException ex)
             {
