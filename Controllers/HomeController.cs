@@ -15,7 +15,12 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var dic = new Dictionary<string, string>();
+        foreach (var head in Request.Headers)
+        {
+            dic.Add(head.Key, head.Value);
+        }
+        return View(dic);
     }
 
     public IActionResult Privacy()

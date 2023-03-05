@@ -20,3 +20,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.headers td {
+  border-width: 2px;
+  border-color: grey;
+  padding: 0.2em;
+  max-width: 500px;
+}

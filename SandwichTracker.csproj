@@ -4,7 +4,9 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Cloud Buildpacks can't handle this. Reenable when we switch to building our own image.
     <PublishReadyToRun>true</PublishReadyToRun>
+    -->
   </PropertyGroup>
 
 </Project>
