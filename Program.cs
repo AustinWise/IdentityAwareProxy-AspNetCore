@@ -24,4 +24,15 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+
+var portStr = Environment.GetEnvironmentVariable("PORT");
+
+if (!string.IsNullOrEmpty(portStr))
+{
+    int port = int.Parse(portStr, System.Globalization.CultureInfo.InvariantCulture);
+    app.Run($"http://0.0.0.0:{port}");
+}
+else
+{
+    app.Run();
+}
