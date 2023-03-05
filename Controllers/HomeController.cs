@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SandwichTracker.Models;
+using Google.Apis.Auth;
 
 namespace SandwichTracker.Controllers;
 
@@ -13,14 +14,32 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var dic = new Dictionary<string, string>();
+        var headersDic = new Dictionary<string, string?>();
         foreach (var head in Request.Headers)
         {
-            dic.Add(head.Key, head.Value);
+            headersDic.Add(head.Key, head.Value);
         }
-        return View(dic);
+
+        string errorMessage = string.Empty;
+        JsonWebSignature.Payload? jwtPayload = null;
+        if (headersDic.TryGetValue("x-goog-iap-jwt-assertion", out string? jwtStr))
+        {
+            try
+            {
+                jwtPayload = await GoogleJsonWebSignature.ValidateAsync(jwtStr);
+            }
+            catch (InvalidJwtException ex)
+            {
+                errorMessage = ex.ToString();
+            }
+        }
+
+
+
+        var model = new HomeModel(headersDic, jwtPayload, errorMessage);
+        return View(model);
     }
 
     public IActionResult Privacy()

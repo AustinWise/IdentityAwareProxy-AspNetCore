@@ -1,15 +1,84 @@
-﻿@model Dictionary<string, string>
+﻿@model HomeModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Sandwhich Tracker Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <h3>Error Message</h3>
+    <pre>
+        @Model.ErrorMessage
+    </pre>
+}
 
-<h3>headers</h3>
+@if (Model.JwtPayload is object)
+{
+    <h3>JWT Payload</h3>
+
+    <table class="headers">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var aud in Model.JwtPayload.AudienceAsList)
+            {
+                <tr>
+                    <td>Audience</td>
+                    <td>@aud</td>
+                </tr>
+            }
+            <tr>
+                <td>Issuer</td>
+                <td>@Model.JwtPayload.Issuer</td>
+            </tr>
+            <tr>
+                <td>Subject</td>
+                <td>@Model.JwtPayload.Subject</td>
+            </tr>
+            <tr>
+                <td>JwtId</td>
+                <td>@Model.JwtPayload.JwtId</td>
+            </tr>
+            <tr>
+                <td>Nonce</td>
+                <td>@Model.JwtPayload.Nonce</td>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td>@Model.JwtPayload.Type</td>
+            </tr>
+            @if (Model.JwtPayload.IssuedAtTimeSeconds.HasValue)
+            {
+                <tr>
+                    <td>Issued At</td>
+                    <td>@DateTime.UnixEpoch.AddSeconds(Model.JwtPayload.IssuedAtTimeSeconds.Value)</td>
+                </tr>
+            }
+            @if (Model.JwtPayload.NotBeforeTimeSeconds.HasValue)
+            {
+                <tr>
+                    <td>Not Before</td>
+                    <td>@DateTime.UnixEpoch.AddSeconds(Model.JwtPayload.NotBeforeTimeSeconds.Value)</td>
+                </tr>
+            }
+            @if (Model.JwtPayload.ExpirationTimeSeconds.HasValue)
+            {
+                <tr>
+                    <td>Expiration</td>
+                    <td>@DateTime.UnixEpoch.AddSeconds(Model.JwtPayload.ExpirationTimeSeconds.Value)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+}
+
+<h3>Headers</h3>
 
 <table class="headers">
     <thead>
@@ -19,11 +88,11 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var kvp in Model)
+        @foreach (var kvp in Model.Headers)
         {
             <tr>
-                <td style="">@kvp.Key</td>
-                <td style="">@kvp.Value</td>
+                <td>@kvp.Key</td>
+                <td>@kvp.Value</td>
             </tr>
         }
     </tbody>
