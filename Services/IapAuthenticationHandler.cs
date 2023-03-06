@@ -29,6 +29,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
     {
         if (!Request.Headers.TryGetValue(IapAssertionHeader, out StringValues jwtStr))
         {
+            Logger.LogError($"Missing {IapAssertionHeader} header");
             return AuthenticateResult.Fail($"Missing {IapAssertionHeader} header");
         }
 
@@ -46,21 +47,31 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
         }
         catch (InvalidJwtException ex)
         {
+            Logger.LogError(ex, "Failed to validate.");
             return AuthenticateResult.Fail(ex);
         }
 
         if (jwtPayload.Email is null)
         {
+            Logger.LogError($"Missing email header");
             return AuthenticateResult.Fail("Missing email claim.");
         }
 
-        var validatedContext = new IapValidatedContext(Context, Scheme, Options);
-        var claimsIdentity = new ClaimsIdentity(new Claim[] {
-            new Claim(ClaimTypes.Actor, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
-            new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer) });
-        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-        var properties = new AuthenticationProperties();
-        var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
-        return AuthenticateResult.Success(ticket);
+        try
+        {
+            var validatedContext = new IapValidatedContext(Context, Scheme, Options);
+            var claimsIdentity = new ClaimsIdentity(new Claim[] {
+                new Claim(ClaimTypes.Actor, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
+                new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer) });
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var properties = new AuthenticationProperties();
+            var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
+            return AuthenticateResult.Success(ticket);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "failed to create idenity objects");
+            throw;
+        }
     }
 }
