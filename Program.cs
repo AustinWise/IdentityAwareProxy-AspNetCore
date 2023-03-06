@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
-using SandwichTracker.Services;
+using Google.Cloud.Diagnostics.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddAuthentication().AddIap();
+    builder.Logging.AddGoogle();
 }
 
 // Add services to the container.
