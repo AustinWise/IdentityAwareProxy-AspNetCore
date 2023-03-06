@@ -7,10 +7,14 @@ class IapAuthenticationConfigureOptions : IConfigureNamedOptions<IapAuthenticati
     public void Configure(string? name, IapAuthenticationOptions options)
     {
         // TODO: config options
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
     }
 
     public void Configure(IapAuthenticationOptions options)
     {
-        // TODO: config options
+        Configure(Options.DefaultName, options);
     }
 }

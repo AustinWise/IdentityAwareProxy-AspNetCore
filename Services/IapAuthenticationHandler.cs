@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text.Encodings.Web;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -23,6 +24,22 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
     public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
+    }
+
+    private AuthenticateResult createMockResult()
+    {
+        var validatedContext = new IapValidatedContext(Context, Scheme, Options);
+        var claims = new Claim[] 
+        {
+            new Claim(ClaimTypes.Name, "accounts.google.com:1234", ClaimValueTypes.String, "https://cloud.google.com/iap"),
+            new Claim(ClaimTypes.Email, "test@awise.us", ClaimValueTypes.Email, "https://cloud.google.com/iap"),
+        };
+        var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name);
+        var claimsPrincipal = new GenericPrincipal(claimsIdentity, null);
+        var properties = new AuthenticationProperties();
+        var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
+        Logger.LogError("scheme: " + Scheme.Name);
+        return AuthenticateResult.Success(ticket);
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -60,10 +77,13 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
         try
         {
             var validatedContext = new IapValidatedContext(Context, Scheme, Options);
-            var claimsIdentity = new ClaimsIdentity(new Claim[] {
-                new Claim(ClaimTypes.Actor, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
-                new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer) });
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var claims = new Claim[] 
+            {
+                new Claim(ClaimTypes.Name, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
+                new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer),
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name);
+            var claimsPrincipal = new GenericPrincipal(claimsIdentity, null);
             var properties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
             Logger.LogError("SUUCCESS: created ticket");
