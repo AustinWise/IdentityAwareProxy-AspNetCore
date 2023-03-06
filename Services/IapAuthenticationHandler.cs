@@ -1,7 +1,9 @@
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
@@ -17,6 +19,12 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
     }
 
     const string IapAssertionHeader = "x-goog-iap-jwt-assertion";
+
+    public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+        : base(options, logger, encoder, clock)
+    {
+    }
+
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(IapAssertionHeader, out StringValues jwtStr))
