@@ -41,6 +41,14 @@
                 <td>User.Identity.Name</td>
                 <td>@User.Identity.Name</td>
             </tr>
+            @* TODO: is there a nicer way to get at the email? *@
+            @foreach (var claim in User.FindAll(System.Security.Claims.ClaimTypes.Email))
+            {
+                <tr>
+                    <td>email</td>
+                    <td>@claim.Value</td>
+                </tr>
+            }
         }
     </tbody>
 </table>

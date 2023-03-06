@@ -79,6 +79,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             var validatedContext = new IapValidatedContext(Context, Scheme, Options);
             var claims = new Claim[] 
             {
+                // TODO: confirm this is the best way to represnt the claims
                 new Claim(ClaimTypes.Name, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
                 new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer),
             };
