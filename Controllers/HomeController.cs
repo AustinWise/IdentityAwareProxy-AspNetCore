@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SandwichTracker.Models;
 using Google.Apis.Auth;
+using Google.Apis.Auth.OAuth2;
 
 namespace SandwichTracker.Controllers;
 
@@ -30,7 +31,7 @@ public class HomeController : Controller
             {
                 var valSettings = new SignedTokenVerificationOptions()
                 {
-                    CertificatesUrl = "https://www.gstatic.com/iap/verify/public_key-jwk",
+                    CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
                 };
                 valSettings.TrustedAudiences.Add("/projects/72643967898/global/backendServices/1079754107036193628");
                 valSettings.TrustedIssuers.Add("https://cloud.google.com/iap");
