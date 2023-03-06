@@ -24,7 +24,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>User.Identity is nonnull.IsAuthenticated</td>
+            <td>User.Identity is nonnull</td>
             <td>@(User.Identity is object)</td>
         </tr>
         @if (User.Identity is object)
@@ -33,17 +33,14 @@
                 <td>User.Identity.IsAuthenticated</td>
                 <td>@User.Identity.IsAuthenticated</td>
             </tr>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <tr>
-                    <td>User.Identity.AuthenticationType</td>
-                    <td>@User.Identity.AuthenticationType</td>
-                </tr>
-                <tr>
-                    <td>User.Identity.Name</td>
-                    <td>@User.Identity.Name</td>
-                </tr>
-            }
+            <tr>
+                <td>User.Identity.AuthenticationType</td>
+                <td>@User.Identity.AuthenticationType</td>
+            </tr>
+            <tr>
+                <td>User.Identity.Name</td>
+                <td>@User.Identity.Name</td>
+            </tr>
         }
     </tbody>
 </table>
