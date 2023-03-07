@@ -92,6 +92,10 @@
                 <td>Type</td>
                 <td>@Model.JwtPayload.Type</td>
             </tr>
+            <tr>
+                <td>Hosted Domain</td>
+                <td>@Model.JwtPayload.HostedDomain</td>
+            </tr>
             @if (Model.JwtPayload.IssuedAtTimeSeconds.HasValue)
             {
                 <tr>
@@ -112,6 +116,16 @@
                     <td>Expiration</td>
                     <td>@DateTime.UnixEpoch.AddSeconds(Model.JwtPayload.ExpirationTimeSeconds.Value)</td>
                 </tr>
+            }
+            @if (Model.JwtPayload.GoogleInfo?.AccessLevels is not null)
+            {
+                @foreach (var level in Model.JwtPayload.GoogleInfo.AccessLevels)
+                {
+                    <tr>
+                        <td>Access Level</td>
+                        <td>@level</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

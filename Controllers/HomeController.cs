@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SandwichTracker.Models;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
+using SandwichTracker.Services;
 
 namespace SandwichTracker.Controllers;
 
@@ -24,7 +25,7 @@ public class HomeController : Controller
         }
 
         string errorMessage = string.Empty;
-        JsonWebSignature.Payload? jwtPayload = null;
+        IapPayload? jwtPayload = null;
         if (headersDic.TryGetValue("x-goog-iap-jwt-assertion", out string? jwtStr))
         {
             try
@@ -35,7 +36,7 @@ public class HomeController : Controller
                 };
                 valSettings.TrustedAudiences.Add("/projects/72643967898/global/backendServices/1079754107036193628");
                 valSettings.TrustedIssuers.Add("https://cloud.google.com/iap");
-                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync(jwtStr, valSettings);
+                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwtStr, valSettings);
             }
             catch (InvalidJwtException ex)
             {

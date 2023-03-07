@@ -1,7 +1,7 @@
-using Google.Apis.Auth;
+using SandwichTracker.Services;
 
 namespace SandwichTracker.Models;
 
-public record class HomeModel(Dictionary<string, string?> Headers, JsonWebSignature.Payload? JwtPayload, string ErrorMessage)
+record class HomeModel(Dictionary<string, string?> Headers, IapPayload? JwtPayload, string ErrorMessage)
 {
 }
