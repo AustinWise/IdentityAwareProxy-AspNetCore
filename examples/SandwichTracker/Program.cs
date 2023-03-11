@@ -38,7 +38,7 @@ var defaultRoute = app.MapControllerRoute(
 
 if (!app.Environment.IsDevelopment())
 {
-    defaultRoute.RequireAuthorization();
+    //defaultRoute.RequireAuthorization();
 }
 
 // For running on Google Cloud Run
