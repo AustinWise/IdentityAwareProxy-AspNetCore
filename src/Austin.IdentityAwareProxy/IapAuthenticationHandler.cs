@@ -29,6 +29,8 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
 
         var valSettings = new SignedTokenVerificationOptions()
         {
+            IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
+            ExpiryClockTolerance = TimeSpan.FromMinutes(30),
             CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
         };
         // TODO: make configurable
