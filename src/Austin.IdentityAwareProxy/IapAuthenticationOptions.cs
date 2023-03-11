@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication;
 
 namespace Austin.IdentityAwareProxy;
