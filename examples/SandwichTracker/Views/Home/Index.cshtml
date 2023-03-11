@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Sandwich Tracker Home Page";
+}
+
+<h3>User Info</h3>
+
+<table class="user-info">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>User.Identity is nonnull</td>
+            <td>@(User.Identity is object)</td>
+        </tr>
+        @if (User.Identity is object)
+        {
+            <tr>
+                <td>User.Identity.IsAuthenticated</td>
+                <td>@User.Identity.IsAuthenticated</td>
+            </tr>
+            <tr>
+                <td>User.Identity.AuthenticationType</td>
+                <td>@User.Identity.AuthenticationType</td>
+            </tr>
+            <tr>
+                <td>User.Identity.Name</td>
+                <td>@User.Identity.Name</td>
+            </tr>
+            @* TODO: is there a nicer way to get at the email? *@
+            @foreach (var claim in User.FindAll(System.Security.Claims.ClaimTypes.Email))
+            {
+                <tr>
+                    <td>email</td>
+                    <td>@claim.Value</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

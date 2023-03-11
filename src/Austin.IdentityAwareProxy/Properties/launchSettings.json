@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Austin.IdentityAwareProxy": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51154;http://localhost:51155"
+    }
+  }
+}
