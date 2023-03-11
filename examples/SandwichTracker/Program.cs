@@ -1,3 +1,4 @@
+using Google.Cloud.Diagnostics.AspNetCore3;
 using Google.Cloud.Diagnostics.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,8 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddAuthentication().AddIap();
-    builder.Logging.AddGoogle();
+    builder.Services.AddGoogleDiagnosticsForAspNetCore();
 }
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
