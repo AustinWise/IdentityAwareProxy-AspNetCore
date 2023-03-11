@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Encodings.Web;
@@ -33,9 +34,13 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             ExpiryClockTolerance = TimeSpan.FromMinutes(30),
             CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
         };
-        // TODO: make configurable
-        valSettings.TrustedAudiences.Add("/projects/72643967898/global/backendServices/1079754107036193628");
+        Debug.Assert(valSettings.TrustedAudiences.Count != 0);
+        foreach (var aud in Options.TrustedAudiences)
+        {
+            valSettings.TrustedAudiences.Add(aud);
+        }
         valSettings.TrustedIssuers.Add("https://cloud.google.com/iap");
+
         IapPayload jwtPayload;
         try
         {
@@ -64,7 +69,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
         try
         {
             var validatedContext = new IapValidatedContext(Context, Scheme, Options);
-            var claims = new List<Claim> 
+            var claims = new List<Claim>
             {
                 // TODO: confirm this is the best way to represnt the claims
                 new Claim(ClaimTypes.Name, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),

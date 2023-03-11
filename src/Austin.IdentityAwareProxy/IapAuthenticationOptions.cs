@@ -12,4 +12,13 @@ public class IapAuthenticationOptions : AuthenticationSchemeOptions
     /// See https://cloud.google.com/iap/docs/force-login for more details.
     /// </remarks>
     public bool AllowPublicAccess { get; set; }
+
+    /// <summary>
+    /// Which IAP instances are allowed to access this application. At least one is required.
+    /// </summary>
+    /// <remarks>
+    /// Should be in the form <c>/projects/PROJECT_NUMBER/apps/PROJECT_ID</c> or <c>/projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID</c>.
+    /// See https://cloud.google.com/iap/docs/signed-headers-howto#iap_validate_jwt-ruby for more information about how to look up these <c>aud</c> values.
+    /// </remarks>
+    public IList<string> TrustedAudiences { get; } = new List<string>();
 }

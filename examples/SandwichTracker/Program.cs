@@ -1,10 +1,13 @@
+using Austin.IdentityAwareProxy;
 using Google.Cloud.Diagnostics.AspNetCore3;
-using Google.Cloud.Diagnostics.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// TODO: add support for testing identity
-if (!builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
+{
+    // TODO: add support for testing identity
+}
+else
 {
     builder.Services.AddAuthentication().AddIap();
     builder.Services.AddGoogleDiagnosticsForAspNetCore();
