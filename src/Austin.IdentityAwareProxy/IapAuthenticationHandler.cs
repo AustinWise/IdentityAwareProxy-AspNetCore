@@ -76,7 +76,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             var claimsPrincipal = new GenericPrincipal(claimsIdentity, roles.ToArray());
             var properties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
-            Logger.LogError("SUCCESS: created ticket");
+            Logger.LogInformation("SUCCESS: created ticket");
             return AuthenticateResult.Success(ticket);
         }
         catch (Exception ex)
