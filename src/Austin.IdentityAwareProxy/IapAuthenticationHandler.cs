@@ -45,10 +45,18 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             return AuthenticateResult.Fail(ex);
         }
 
-        if (jwtPayload.Email is null)
+        if (jwtPayload.Subject is null || jwtPayload.Email is null)
         {
-            Logger.LogError($"Missing email header");
-            return AuthenticateResult.Fail("Missing email claim.");
+            if (Options.AllowPublicAccess)
+            {
+                return AuthenticateResult.NoResult();
+            }
+            else
+            {
+                const string ERROR_MESSAGE = $"User identity missing in JWT. Set option {nameof(Options.AllowPublicAccess)} to true if you meant to allow unathenticated users to access this site.";
+                Logger.LogCritical(ERROR_MESSAGE);
+                return AuthenticateResult.Fail(ERROR_MESSAGE);
+            }
         }
 
         try
