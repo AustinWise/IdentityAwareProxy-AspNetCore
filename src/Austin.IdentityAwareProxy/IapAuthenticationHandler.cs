@@ -24,7 +24,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
     {
         if (!Request.Headers.TryGetValue(IapAssertionHeader, out StringValues jwtStr))
         {
-            Logger.LogError($"Missing {IapAssertionHeader} header");
+            Logger.MissingHeader();
             return AuthenticateResult.Fail($"Missing {IapAssertionHeader} header");
         }
 
@@ -48,7 +48,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
         }
         catch (InvalidJwtException ex)
         {
-            Logger.LogError(ex, "Failed to validate.");
+            Logger.InvalidJwt(ex);
             return AuthenticateResult.Fail(ex);
         }
 
@@ -61,7 +61,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             else
             {
                 const string ERROR_MESSAGE = $"User identity missing in JWT. Set option {nameof(Options.AllowPublicAccess)} to true if you meant to allow unathenticated users to access this site.";
-                Logger.LogCritical(ERROR_MESSAGE);
+                Logger.UnexpectedUnauthenticatedUser();
                 return AuthenticateResult.Fail(ERROR_MESSAGE);
             }
         }
@@ -91,12 +91,12 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             var claimsPrincipal = new GenericPrincipal(claimsIdentity, roles.ToArray());
             var properties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
-            Logger.LogInformation("SUCCESS: created ticket");
+            Logger.SuccessfullyCreatedPrincipal();
             return AuthenticateResult.Success(ticket);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "failed to create identity objects");
+            Logger.FailureCreatingPrincipal(ex);
             throw;
         }
     }
