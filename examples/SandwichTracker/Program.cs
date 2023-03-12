@@ -1,4 +1,3 @@
-using Austin.IdentityAwareProxy;
 using Google.Cloud.Diagnostics.AspNetCore3;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,14 +9,18 @@ if (builder.Environment.IsDevelopment())
 else
 {
     builder.Services.AddAuthentication().AddIap();
-    builder.Services.AddGoogleDiagnosticsForAspNetCore();
+    builder.Services.AddGoogleDiagnosticsForAspNetCore("72643967898");
 }
 
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+app.UseHealthChecks("/health");
+app.UseIap();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -26,7 +29,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

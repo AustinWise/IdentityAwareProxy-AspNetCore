@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Austin.IdentityAwareProxy;
+using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class IapExtensions
+public static class IapServiceExtensions
 {
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder)
     {

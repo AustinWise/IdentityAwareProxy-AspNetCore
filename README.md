@@ -13,7 +13,6 @@ Currently implemented features:
 
 * Check the IP address of the incoming connection if possible.
 * Add an option to require all connections to be authenticated with IAP.
-* Add support for health checks in the example app.
 * Actually implement something interesting in the example app.
 * Add an IAP simulator for testing.
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).

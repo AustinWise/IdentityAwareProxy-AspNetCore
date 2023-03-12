@@ -34,7 +34,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             ExpiryClockTolerance = TimeSpan.FromMinutes(30),
             CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
         };
-        Debug.Assert(valSettings.TrustedAudiences.Count != 0);
+        Debug.Assert(Options.TrustedAudiences.Count != 0);
         foreach (var aud in Options.TrustedAudiences)
         {
             valSettings.TrustedAudiences.Add(aud);
