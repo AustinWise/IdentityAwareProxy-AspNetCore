@@ -3,6 +3,7 @@ using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace Austin.IdentityAwareProxy
@@ -14,7 +15,7 @@ namespace Austin.IdentityAwareProxy
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
-        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
+        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<IapAuthenticationOptions> authOptions)
         {
             _next = next;
             _logger = loggerFactory.CreateLogger<IapMiddleware>();
@@ -58,6 +59,8 @@ namespace Austin.IdentityAwareProxy
             }
 
             // TODO: check if unauthenticated users are allowed.
+
+            context.Features.Set<IIapFeature>(new IapFeature(jwtPayload));
 
             await _next(context);
         }

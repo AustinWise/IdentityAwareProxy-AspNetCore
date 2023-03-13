@@ -3,13 +3,13 @@ using Newtonsoft.Json;
 
 namespace Austin.IdentityAwareProxy;
 
-class GoogleInfo
+public class GoogleInfo
 {
     [JsonProperty("access_levels")]
     public List<string>? AccessLevels { get; set; }
 }
 
-class IapPayload : JsonWebSignature.Payload
+public class IapPayload : JsonWebSignature.Payload
 {
     [JsonProperty("email")]
     public string? Email { get; set; }

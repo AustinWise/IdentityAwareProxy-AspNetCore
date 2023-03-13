@@ -4,6 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <ContainerImageName>us-central1-docker.pkg.dev/test-iap-379718/sandwich-apps/sandwichtracker</ContainerImageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(CNB_STACK_ID)' != ''">
@@ -32,6 +33,7 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.Diagnostics.AspNetCore3" Version="5.1.0" />
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
     </ItemGroup>
 
 </Project>

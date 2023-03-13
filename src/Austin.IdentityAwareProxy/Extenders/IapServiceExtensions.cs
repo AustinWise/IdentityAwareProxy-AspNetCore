@@ -1,8 +1,7 @@
+using Austin.IdentityAwareProxy;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Austin.IdentityAwareProxy;
-using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -10,16 +9,16 @@ public static class IapServiceExtensions
 {
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder)
     {
-        return AddIap(builder, IapDefaults.AuthenticationScheme, _ => { });
+        return builder.AddIap(IapDefaults.AuthenticationScheme, _ => { });
     }
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder, string authenticationScheme)
     {
-        return AddIap(builder, authenticationScheme, _ => { });
+        return builder.AddIap(authenticationScheme, _ => { });
     }
 
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder, string authenticationScheme, Action<IapAuthenticationOptions> configureOptions)
     {
-        return AddIap(builder, authenticationScheme, displayName: null, configureOptions: configureOptions);
+        return builder.AddIap(authenticationScheme, displayName: null, configureOptions: configureOptions);
     }
 
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder, string authenticationScheme, string? displayName, Action<IapAuthenticationOptions> configureOptions)

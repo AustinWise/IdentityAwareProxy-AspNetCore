@@ -9,6 +9,14 @@ Currently implemented features:
 * Uses the user's email as the username.
 * Maps IAP access levels to roles.
 
+NOTE: currently this codebase does not completely prevent misconfigured apps from
+processing requests. Specifically JWTs for the wrong audience are accepted.
+That is, someone could capture an IAP token and forward it to this app and the
+request would keep processing.
+
+The solution is to this problem is to somehow share the same settings between
+the authentication handler and the middleware.
+
 ## TODO
 
 * Check the IP address of the incoming connection if possible.
