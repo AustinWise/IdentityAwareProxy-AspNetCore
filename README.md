@@ -25,8 +25,10 @@ the authentication handler and the middleware.
 * Add an IAP simulator for testing.
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).
 * Figure out if there is a good way to pass the IAP JWT to a backend service.
-  The backend service would need some way to verify the IAP JWT was actually received by
-  the frontend service. Maybe [sign a message](https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-jwt)
+  Probably by adding an option for the authentication phase to look for the JWT in a different header.
+  This would allow a [service account to authenicate with the IAP](https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_service_account),
+  then the middle ware would validate the JWT, and then the authnetication phase would load the user's identity from
+  the extra header. The backend service could either trust that the frontend validated the audience values or do its own validation.
 * Add options for customizing how the username is chosen.
   * Email (current default)
   * User id, with or without the `accounts.google.com:` prefix.
