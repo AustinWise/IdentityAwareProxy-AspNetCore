@@ -6,29 +6,17 @@ for [Google Cloud Identity Aware Proxy](https://cloud.google.com/iap).
 
 Currently implemented features:
 
+* Blocks all connections that have a missing or invalid IAP JWT.
 * Uses the user's email as the username.
 * Maps IAP access levels to roles.
-
-NOTE: currently this codebase does not completely prevent misconfigured apps from
-processing requests. Specifically JWTs for the wrong audience are accepted.
-That is, someone could capture an IAP token and forward it to this app and the
-request would keep processing.
-
-The solution is to this problem is to somehow share the same settings between
-the authentication handler and the middleware.
 
 ## TODO
 
 * Check the IP address of the incoming connection if possible.
-* Add an option to require all connections to be authenticated with IAP.
 * Actually implement something interesting in the example app.
 * Add an IAP simulator for testing.
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).
-* Figure out if there is a good way to pass the IAP JWT to a backend service.
-  Probably by adding an option for the authentication phase to look for the JWT in a different header.
-  This would allow a [service account to authenicate with the IAP](https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_service_account),
-  then the middle ware would validate the JWT, and then the authnetication phase would load the user's identity from
-  the extra header. The backend service could either trust that the frontend validated the audience values or do its own validation.
+* Add the option to validate the audience of the JWT in the alternate header.
 * Add options for customizing how the username is chosen.
   * Email (current default)
   * User id, with or without the `accounts.google.com:` prefix.

@@ -7,6 +7,18 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class IapServiceExtensions
 {
+    public static void AddIap(this IServiceCollection services)
+    {
+        AddIap(services, _ => { });
+    }
+
+    public static void AddIap(this IServiceCollection services, Action<IapOptions> configureOptions)
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<IapOptions>, IapConfigureOptions>());
+        services.Configure(configureOptions);
+        services.AddOptions<IapOptions>().ValidateDataAnnotations();
+    }
+
     public static AuthenticationBuilder AddIap(this AuthenticationBuilder builder)
     {
         return builder.AddIap(IapDefaults.AuthenticationScheme, _ => { });

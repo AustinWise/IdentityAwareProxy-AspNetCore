@@ -4,8 +4,8 @@ namespace Austin.IdentityAwareProxy
 {
     internal static partial class IapLoggingExtensions
     {
-        [LoggerMessage(1, LogLevel.Critical, "The request was missing the IAP header.", EventName = "MissingHeader")]
-        public static partial void MissingHeader(this ILogger logger);
+        [LoggerMessage(1, LogLevel.Critical, "The request was missing the IAP header: {header}", EventName = "MissingHeader")]
+        public static partial void MissingHeader(this ILogger logger, string header);
 
         [LoggerMessage(2, LogLevel.Critical, "The IAP JWT was invalid.", EventName = "InvalidJwt")]
         public static partial void InvalidJwt(this ILogger logger, Exception exception);

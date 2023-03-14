@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Configuration;
 
 namespace Austin.IdentityAwareProxy;
 
@@ -27,31 +26,7 @@ class IapAuthenticationConfigureOptions : IConfigureNamedOptions<IapAuthenticati
             return;
         }
 
-        var audience = configSection["TrustedAudience"];
-        var audiences = configSection.GetSection(nameof(IapAuthenticationOptions.TrustedAudiences)).GetChildren().Select(aud => aud.Value).ToList();
-        if (audience is not null)
-        {
-            audiences.Add(audience);
-        }
-        foreach(var aud in audiences)
-        {
-            options.TrustedAudiences.Add(aud!);
-        }
-
-        options.AllowPublicAccess = TryGetBool(configSection, nameof(options.AllowPublicAccess), options.AllowPublicAccess);
-    }
-
-    private static bool TryGetBool(IConfiguration config, string key, bool defaultValue)
-    {
-        string? value = config[key];
-        if (string.IsNullOrEmpty(value))
-        {
-            return defaultValue;
-        }
-        else
-        {
-            return bool.Parse(value);
-        }
+        options.JwtHeader = configSection[nameof(options.JwtHeader)] ?? options.JwtHeader;
     }
 
     public void Configure(IapAuthenticationOptions options)

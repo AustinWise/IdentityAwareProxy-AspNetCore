@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Encodings.Web;
@@ -13,8 +12,6 @@ namespace Austin.IdentityAwareProxy;
 
 public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationOptions>
 {
-    const string IapAssertionHeader = "x-goog-iap-jwt-assertion";
-
     public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
@@ -22,48 +19,50 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue(IapAssertionHeader, out StringValues jwtStr))
-        {
-            Logger.MissingHeader();
-            return AuthenticateResult.Fail($"Missing {IapAssertionHeader} header");
-        }
-
-        var valSettings = new SignedTokenVerificationOptions()
-        {
-            IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
-            ExpiryClockTolerance = TimeSpan.FromMinutes(30),
-            CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
-        };
-        Debug.Assert(Options.TrustedAudiences.Count != 0);
-        foreach (var aud in Options.TrustedAudiences)
-        {
-            valSettings.TrustedAudiences.Add(aud);
-        }
-        valSettings.TrustedIssuers.Add("https://cloud.google.com/iap");
-
         IapPayload jwtPayload;
-        try
+
+        if (Options.JwtHeader is null)
         {
-            jwtPayload = await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwtStr, valSettings);
+            var iapFeature = Context.Features.Get<IIapFeature>();
+            if (iapFeature is null)
+            {
+                throw new InvalidOperationException("Please make sure the call UseIap() to configure the IapMiddleWare. This should be the first thing done after calling WebApplicationBuilder.Build and UseHealthChecks.");
+            }
+            jwtPayload = iapFeature.Payload;
         }
-        catch (InvalidJwtException ex)
+        else
         {
-            Logger.InvalidJwt(ex);
-            return AuthenticateResult.Fail(ex);
+            if (!Request.Headers.TryGetValue(Options.JwtHeader, out StringValues jwtStr))
+            {
+                Logger.MissingHeader(Options.JwtHeader);
+                return AuthenticateResult.Fail($"Missing {Options.JwtHeader} header");
+            }
+
+            var valSettings = new SignedTokenVerificationOptions()
+            {
+                IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
+                ExpiryClockTolerance = TimeSpan.FromMinutes(30),
+                CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
+                TrustedIssuers = { "https://cloud.google.com/iap" },
+            };
+            // TODO: support TrustedAudiences for the forwarded IAP too?
+
+            try
+            {
+                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwtStr, valSettings);
+            }
+            catch (InvalidJwtException ex)
+            {
+                Logger.InvalidJwt(ex);
+                return AuthenticateResult.Fail(ex);
+            }
         }
+
 
         if (jwtPayload.Subject is null || jwtPayload.Email is null)
         {
-            if (Options.AllowPublicAccess)
-            {
-                return AuthenticateResult.NoResult();
-            }
-            else
-            {
-                const string ERROR_MESSAGE = $"User identity missing in JWT. Set option {nameof(Options.AllowPublicAccess)} to true if you meant to allow unathenticated users to access this site.";
-                Logger.UnexpectedUnauthenticatedUser();
-                return AuthenticateResult.Fail(ERROR_MESSAGE);
-            }
+            // TODO: check AllowPublicAccess here too?
+            return AuthenticateResult.NoResult();
         }
 
         try
@@ -99,10 +98,5 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             Logger.FailureCreatingPrincipal(ex);
             throw;
         }
-    }
-
-    protected override Task InitializeHandlerAsync()
-    {
-        return base.InitializeHandlerAsync();
     }
 }

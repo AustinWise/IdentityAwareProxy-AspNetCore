@@ -5,20 +5,14 @@ namespace Austin.IdentityAwareProxy;
 public class IapAuthenticationOptions : AuthenticationSchemeOptions
 {
     /// <summary>
-    /// See to true if you have allowed the <c>allUsers</c> access to your IAP.
+    /// Which header to read the JWT from. If not set, the JWT is ready from the default header.
     /// </summary>
     /// <remarks>
-    /// If false, an error will be logged if a request from an anoymous user is received.
-    /// See https://cloud.google.com/iap/docs/force-login for more details.
+    /// This is useful when you have a backend service that is behind IAP. The caller of the service
+    /// can [use a service account to authenticate with the IAP](https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_service_account)
+    /// . They can also pass the IAP JWT they received in a different header. This backend service can
+    /// then pull the JWT from this other header to get the original identity of the user who called
+    /// the frontend service.
     /// </remarks>
-    public bool AllowPublicAccess { get; set; }
-
-    /// <summary>
-    /// Which IAP instances are allowed to access this application. At least one is required.
-    /// </summary>
-    /// <remarks>
-    /// Should be in the form <c>/projects/PROJECT_NUMBER/apps/PROJECT_ID</c> or <c>/projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID</c>.
-    /// See https://cloud.google.com/iap/docs/signed-headers-howto#iap_validate_jwt-ruby for more information about how to look up these <c>aud</c> values.
-    /// </remarks>
-    public IList<string> TrustedAudiences { get; } = new List<string>();
+    public string? JwtHeader { get; set; }
 }

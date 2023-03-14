@@ -8,6 +8,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
+    builder.Services.AddIap();
     builder.Services.AddAuthentication().AddIap();
     builder.Services.AddGoogleDiagnosticsForAspNetCore("72643967898");
 }
@@ -20,7 +21,6 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 app.UseHealthChecks("/health");
-app.UseIap();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -28,6 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseIap();
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }

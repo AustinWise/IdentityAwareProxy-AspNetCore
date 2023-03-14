@@ -14,11 +14,20 @@ namespace Austin.IdentityAwareProxy
 
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly string[] _trustedAudiences;
+        private readonly bool _allowPublicAccess;
 
-        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<IapAuthenticationOptions> authOptions)
+        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<IapOptions> options)
         {
             _next = next;
             _logger = loggerFactory.CreateLogger<IapMiddleware>();
+            _trustedAudiences = options.Value.TrustedAudiences.ToArray();
+            _allowPublicAccess = options.Value.AllowPublicAccess;
+
+            if (_trustedAudiences.Length == 0)
+            {
+                throw new InvalidOperationException($"You must specify at least one value for {nameof(options.Value.TrustedAudiences)}.");
+            }
         }
 
         public async Task Invoke(HttpContext context)
@@ -33,19 +42,22 @@ namespace Austin.IdentityAwareProxy
 
             if (!context.Request.Headers.TryGetValue(IAP_HEADER, out StringValues jwtStr))
             {
-                _logger.MissingHeader();
+                _logger.MissingHeader(IAP_HEADER);
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }
 
-            // TODO: add TrustedAudiences
             var valSettings = new SignedTokenVerificationOptions()
             {
                 IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
                 ExpiryClockTolerance = TimeSpan.FromMinutes(30),
                 CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
-                TrustedIssuers = { "https://cloud.google.com/iap" }
+                TrustedIssuers = { "https://cloud.google.com/iap" },
             };
+            foreach (var aud in _trustedAudiences)
+            {
+                valSettings.TrustedAudiences.Add(aud);
+            }
             IapPayload jwtPayload;
             try
             {
@@ -58,7 +70,12 @@ namespace Austin.IdentityAwareProxy
                 return;
             }
 
-            // TODO: check if unauthenticated users are allowed.
+            if (!_allowPublicAccess && string.IsNullOrEmpty(jwtPayload.Subject))
+            {
+                _logger.UnexpectedUnauthenticatedUser();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
+            }
 
             context.Features.Set<IIapFeature>(new IapFeature(jwtPayload));
 
