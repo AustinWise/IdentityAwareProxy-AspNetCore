@@ -20,9 +20,10 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
+// The health check should be the only thing that is processed before the IAP.
 app.UseHealthChecks("/health");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
 }

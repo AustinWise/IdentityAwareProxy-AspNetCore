@@ -12,9 +12,12 @@ namespace Austin.IdentityAwareProxy;
 
 public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationOptions>
 {
-    public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+    private readonly IIapValidator _iapValidator;
+
+    public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IIapValidator iapValidator)
         : base(options, logger, encoder, clock)
     {
+        _iapValidator = iapValidator;
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -38,18 +41,10 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
                 return AuthenticateResult.Fail($"Missing {Options.JwtHeader} header");
             }
 
-            var valSettings = new SignedTokenVerificationOptions()
-            {
-                IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
-                ExpiryClockTolerance = TimeSpan.FromMinutes(30),
-                CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
-                TrustedIssuers = { "https://cloud.google.com/iap" },
-            };
-            // TODO: support TrustedAudiences for the forwarded IAP too?
-
             try
             {
-                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwtStr, valSettings);
+                // TODO: support TrustedAudiences for the forwarded IAP too?
+                jwtPayload = await _iapValidator.Validate(jwtStr, Array.Empty<string>());
             }
             catch (InvalidJwtException ex)
             {

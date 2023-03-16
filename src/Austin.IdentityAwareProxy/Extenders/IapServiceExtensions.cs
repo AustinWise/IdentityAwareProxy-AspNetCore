@@ -14,6 +14,7 @@ public static class IapServiceExtensions
 
     public static void AddIap(this IServiceCollection services, Action<IapOptions> configureOptions)
     {
+        services.TryAddSingleton<IIapValidator, DefaultIapValidator>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<IapOptions>, IapConfigureOptions>());
         services.Configure(configureOptions);
         services.AddOptions<IapOptions>().ValidateDataAnnotations();

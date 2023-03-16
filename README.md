@@ -26,4 +26,4 @@ Currently implemented features:
 * Add options for customizing how IAP access levels are translated into roles.
   * Strip prefix
   * Custom delegate on the event object for transforming.
-* Add NativeAOT / Trim compatability. This might require using a different library to validate the JWT.
+* Add NativeAOT / Trim compatibility. This might require using a different library to validate the JWT.

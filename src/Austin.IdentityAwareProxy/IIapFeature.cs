@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Austin.IdentityAwareProxy;
 
-namespace Austin.IdentityAwareProxy
+public interface IIapFeature
 {
-    public interface IIapFeature
-    {
-        public IapPayload Payload { get; }
-    }
+    public IapPayload Payload { get; }
 }

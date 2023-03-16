@@ -1,4 +1,5 @@
-﻿using Google.Api.Gax;
+﻿using System.Diagnostics;
+using Google.Api.Gax;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Http;
@@ -14,26 +15,33 @@ namespace Austin.IdentityAwareProxy
 
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly IIapValidator _iapValidator;
         private readonly string[] _trustedAudiences;
         private readonly bool _allowPublicAccess;
 
-        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<IapOptions> options)
+        public IapMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<IapOptions> options, IIapValidator iapValidator)
         {
             _next = next;
             _logger = loggerFactory.CreateLogger<IapMiddleware>();
             _trustedAudiences = options.Value.TrustedAudiences.ToArray();
             _allowPublicAccess = options.Value.AllowPublicAccess;
+            _iapValidator = iapValidator;
 
-            if (_trustedAudiences.Length == 0)
-            {
-                throw new InvalidOperationException($"You must specify at least one value for {nameof(options.Value.TrustedAudiences)}.");
-            }
+            // if (_trustedAudiences.Length == 0)
+            // {
+            //     throw new InvalidOperationException($"You must specify at least one value for {nameof(options.Value.TrustedAudiences)}.");
+            // }
+            System.Console.WriteLine($"len: {_trustedAudiences.Length}");
         }
 
         public async Task Invoke(HttpContext context)
         {
             var ip = context.Connection.RemoteIpAddress;
+            var sw = Stopwatch.StartNew();
             var platform = await Platform.InstanceAsync();
+            sw.Stop();
+            System.Console.WriteLine($"platform detection took {sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($"ip: {context.Connection.RemoteIpAddress}");
 
             if (ip != null && platform.Type != PlatformType.Unknown)
             {
@@ -47,21 +55,10 @@ namespace Austin.IdentityAwareProxy
                 return;
             }
 
-            var valSettings = new SignedTokenVerificationOptions()
-            {
-                IssuedAtClockTolerance = TimeSpan.FromSeconds(30),
-                ExpiryClockTolerance = TimeSpan.FromMinutes(30),
-                CertificatesUrl = GoogleAuthConsts.IapKeySetUrl,
-                TrustedIssuers = { "https://cloud.google.com/iap" },
-            };
-            foreach (var aud in _trustedAudiences)
-            {
-                valSettings.TrustedAudiences.Add(aud);
-            }
             IapPayload jwtPayload;
             try
             {
-                jwtPayload = await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwtStr, valSettings);
+                jwtPayload = await _iapValidator.Validate(jwtStr, _trustedAudiences);
             }
             catch (InvalidJwtException ex)
             {
