@@ -48,7 +48,7 @@ namespace Austin.IdentityAwareProxy
             if (ip != null)
             {
                 var platform = await Platform.InstanceAsync();
-                if (platform.Type == PlatformType.Gce)
+                if (platform.Type == PlatformType.Gce || platform.Type == PlatformType.Gke)
                 {
                     if (!s_gfeNet1.Contains(ip) && !s_gfeNet2.Contains(ip))
                     {
@@ -67,10 +67,6 @@ namespace Austin.IdentityAwareProxy
                 else if (platform.Type == PlatformType.Gae)
                 {
                     // TODO: try app engine
-                }
-                else if (platform.Type == PlatformType.Gke)
-                {
-                    // TODO: try GKE
                 }
             }
 
