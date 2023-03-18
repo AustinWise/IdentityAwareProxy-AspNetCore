@@ -15,4 +15,6 @@ public class IapAuthenticationOptions : AuthenticationSchemeOptions
     /// the frontend service.
     /// </remarks>
     public string? JwtHeader { get; set; }
+
+    public long? MapAccessPolicyToRoles { get; set; }
 }

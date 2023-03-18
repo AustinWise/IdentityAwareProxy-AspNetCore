@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
+using System.Globalization;
 
 namespace Austin.IdentityAwareProxy;
 
@@ -27,6 +28,12 @@ class IapAuthenticationConfigureOptions : IConfigureNamedOptions<IapAuthenticati
         }
 
         options.JwtHeader = configSection[nameof(options.JwtHeader)] ?? options.JwtHeader;
+
+        string? policyId = configSection[nameof(options.MapAccessPolicyToRoles)];
+        if (policyId != null)
+        {
+            options.MapAccessPolicyToRoles = long.Parse(policyId, CultureInfo.InvariantCulture);
+        }
     }
 
     public void Configure(IapAuthenticationOptions options)

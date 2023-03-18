@@ -68,14 +68,15 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             {
                 claims.Add((new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer)));
             }
-            if (jwtPayload.GoogleInfo?.AccessLevels is not null)
+            if (Options.MapAccessPolicyToRoles.HasValue && jwtPayload.GoogleInfo?.AccessLevels is not null)
             {
-                foreach (var level in jwtPayload.GoogleInfo.AccessLevels)
+                foreach (var levelStr in jwtPayload.GoogleInfo.AccessLevels)
                 {
-                    // Role name looks like: accessPolicies/786406837856/accessLevels/level_name
-                    // TODO: maybe add an option to strip the access policy prefix?
-                    // Taking care to check that the policy ID matches.
-                    claims.Add(new Claim(ClaimTypes.Role, level, ClaimValueTypes.String, jwtPayload.Issuer));
+                    var level = IapAccessLevel.Parse(levelStr);
+                    if (level.PolicyId == Options.MapAccessPolicyToRoles.Value)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, level.Level, ClaimValueTypes.String, jwtPayload.Issuer));
+                    }
                 }
             }
             var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name, ClaimTypes.NameIdentifier, ClaimTypes.Role);
