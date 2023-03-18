@@ -1,6 +1,8 @@
-﻿using Google.Api.Gax;
+﻿using System.Net;
+using Google.Api.Gax;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -10,6 +12,13 @@ namespace Austin.IdentityAwareProxy
     public class IapMiddleware
     {
         const string IAP_HEADER = "x-goog-iap-jwt-assertion";
+
+        // Where connections should be coming from for load balancers.
+        // Documented in these locations:
+        // * https://cloud.google.com/iap/docs/load-balancer-howto#firewall
+        // * https://cloud.google.com/load-balancing/docs/https
+        static readonly IPNetwork s_gfeNet1 = new IPNetwork(IPAddress.Parse("35.191.0.0"), 16);
+        static readonly IPNetwork s_gfeNet2 = new IPNetwork(IPAddress.Parse("130.211.0.0"), 22);
 
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
@@ -35,11 +44,34 @@ namespace Austin.IdentityAwareProxy
         public async Task Invoke(HttpContext context)
         {
             var ip = context.Connection.RemoteIpAddress;
-            var platform = await Platform.InstanceAsync();
 
-            if (ip != null && platform.Type != PlatformType.Unknown)
+            if (ip != null)
             {
-                // TODO: validate that the remote IP address is allowed.
+                var platform = await Platform.InstanceAsync();
+                if (platform.Type == PlatformType.Gce)
+                {
+                    if (!s_gfeNet1.Contains(ip) && !s_gfeNet2.Contains(ip))
+                    {
+                        _logger.UnexpectedIpAddress(ip);
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return;
+                    }
+                }
+                else if (platform.Type == PlatformType.CloudRun)
+                {
+                    // The requests appear to always come from the same link-local IP address, so we can't
+                    // tell where its coming from. However it appears the Cloud Run is stripping the
+                    // IAP header when it is sent from someone other than IAP. So perhaps we don't
+                    // have to worry about a pass-the-JWT attack on Cloud Run.
+                }
+                else if (platform.Type == PlatformType.Gae)
+                {
+                    // TODO: try app engine
+                }
+                else if (platform.Type == PlatformType.Gke)
+                {
+                    // TODO: try GKE
+                }
             }
 
             if (!context.Request.Headers.TryGetValue(IAP_HEADER, out StringValues jwtStr))
