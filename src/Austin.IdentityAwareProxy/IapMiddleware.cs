@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using Google.Api.Gax;
+﻿using Google.Api.Gax;
 using Google.Apis.Auth;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,11 +35,7 @@ namespace Austin.IdentityAwareProxy
         public async Task Invoke(HttpContext context)
         {
             var ip = context.Connection.RemoteIpAddress;
-            var sw = Stopwatch.StartNew();
             var platform = await Platform.InstanceAsync();
-            sw.Stop();
-            System.Console.WriteLine($"platform detection took {sw.ElapsedMilliseconds}");
-            System.Console.WriteLine($"ip: {context.Connection.RemoteIpAddress}");
 
             if (ip != null && platform.Type != PlatformType.Unknown)
             {

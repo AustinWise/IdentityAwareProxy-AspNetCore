@@ -26,7 +26,7 @@ Currently implemented features:
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).
 * Add the option to validate the audience of the JWT in the alternate header.
 * Add options for customizing how the username is chosen.
-  * User id, with or without the `accounts.google.com:` prefix. (current default)
+  * User id, with the `accounts.google.com:` prefix. (current default)
   * Email
   * A custom delegate on the events object.
   * See also [these docs](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/additional-claims?view=aspnetcore-7.0)

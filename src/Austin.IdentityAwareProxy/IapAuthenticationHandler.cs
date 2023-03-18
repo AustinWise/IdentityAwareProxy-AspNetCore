@@ -54,7 +54,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
         }
 
 
-        if (jwtPayload.Subject is null || jwtPayload.Email is null)
+        if (jwtPayload.Subject is null)
         {
             // TODO: check AllowPublicAccess here too?
             return AuthenticateResult.NoResult();
@@ -62,14 +62,12 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
 
         try
         {
-            var validatedContext = new IapValidatedContext(Context, Scheme, Options);
-            var claims = new List<Claim>
+            var claims = new List<Claim>(2 + jwtPayload.GoogleInfo?.AccessLevels?.Count ?? 0);
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer));
+            if (!string.IsNullOrEmpty(jwtPayload.Email))
             {
-                // TODO: confirm this is the best way to represnt the claims
-                new Claim(ClaimTypes.Name, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer),
-                new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer),
-            };
-            var roles = new List<string>();
+                claims.Add((new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer)));
+            }
             if (jwtPayload.GoogleInfo?.AccessLevels is not null)
             {
                 foreach (var level in jwtPayload.GoogleInfo.AccessLevels)
@@ -78,11 +76,10 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
                     // TODO: maybe add an option to strip the access policy prefix?
                     // Taking care to check that the policy ID matches.
                     claims.Add(new Claim(ClaimTypes.Role, level, ClaimValueTypes.String, jwtPayload.Issuer));
-                    roles.Add(level);
                 }
             }
-            var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name);
-            var claimsPrincipal = new GenericPrincipal(claimsIdentity, roles.ToArray());
+            var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name, ClaimTypes.NameIdentifier, ClaimTypes.Role);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var properties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
             Logger.SuccessfullyCreatedPrincipal();
