@@ -1,5 +1,4 @@
-﻿using System;
-using Google.Apis.Auth;
+﻿using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Primitives;
 
@@ -7,7 +6,7 @@ namespace Austin.IdentityAwareProxy;
 
 public class DefaultIapValidator : IIapValidator
 {
-    public async Task<IapPayload> Validate(StringValues jwtHeader, IEnumerable<string> trustedAudiences)
+    public async Task<IapPayload> Validate(StringValues jwtHeader, string[] trustedAudiences, CancellationToken ct)
     {
         if (jwtHeader.Count != 1)
         {
@@ -30,7 +29,7 @@ public class DefaultIapValidator : IIapValidator
 
         // TODO: consider enforcing the requirement for at least one audience here?
 
-        return await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwt, valSettings); ;
+        return await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwt, valSettings, ct);
     }
 }
 

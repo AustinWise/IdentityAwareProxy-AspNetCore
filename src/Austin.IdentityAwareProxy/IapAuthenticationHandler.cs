@@ -44,7 +44,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             try
             {
                 // TODO: support TrustedAudiences for the forwarded IAP too?
-                jwtPayload = await _iapValidator.Validate(jwtStr, Array.Empty<string>());
+                jwtPayload = await _iapValidator.Validate(jwtStr, Array.Empty<string>(), Context.RequestAborted);
             }
             catch (InvalidJwtException ex)
             {

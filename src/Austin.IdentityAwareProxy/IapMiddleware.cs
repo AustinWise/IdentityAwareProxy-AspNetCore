@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using Google.Api.Gax;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
@@ -34,11 +35,8 @@ namespace Austin.IdentityAwareProxy
             _allowPublicAccess = options.Value.AllowPublicAccess;
             _iapValidator = iapValidator;
 
-            // if (_trustedAudiences.Length == 0)
-            // {
-            //     throw new InvalidOperationException($"You must specify at least one value for {nameof(options.Value.TrustedAudiences)}.");
-            // }
-            System.Console.WriteLine($"len: {_trustedAudiences.Length}");
+            // This should be enforced by the options validator.
+            Debug.Assert(_trustedAudiences.Length != 0);
         }
 
         public async Task Invoke(HttpContext context)
@@ -80,7 +78,7 @@ namespace Austin.IdentityAwareProxy
             IapPayload jwtPayload;
             try
             {
-                jwtPayload = await _iapValidator.Validate(jwtStr, _trustedAudiences);
+                jwtPayload = await _iapValidator.Validate(jwtStr, _trustedAudiences, context.RequestAborted);
             }
             catch (InvalidJwtException ex)
             {
