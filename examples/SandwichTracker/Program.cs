@@ -1,4 +1,5 @@
 using Google.Cloud.Diagnostics.AspNetCore3;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,21 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseIap();
+
+    // UseForwardedHeaders must be after UseIap for the IP checking in in UseIap to work correctly.
+    // UseForwardedHeaders is needed so that UseHsts knows we are actually using HTTPS and will send the header.
+    var forwardOpts = new ForwardedHeadersOptions()
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        // As documented here, second from the end is the actual client IP address: https://cloud.google.com/load-balancing/docs/https#x-forwarded-for_header
+        ForwardLimit = 2,
+    };
+    // The IAP middleware already validated the IP address of the upstream and the IAP JWT token.
+    // So remove the restriction that only localhost can forward.
+    forwardOpts.KnownNetworks.Clear();
+    forwardOpts.KnownProxies.Clear();
+    app.UseForwardedHeaders(forwardOpts);
+
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
