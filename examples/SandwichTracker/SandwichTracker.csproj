@@ -34,7 +34,7 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.Diagnostics.AspNetCore3" Version="5.1.0" />
-        <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.307" />
     </ItemGroup>
 
 </Project>

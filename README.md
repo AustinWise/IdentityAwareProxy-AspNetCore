@@ -22,7 +22,8 @@ Currently implemented features:
 * Consider integrating with
   [ASP.NET Identity](https://learn.microsoft.com/en-us/aspnet/identity/overview/getting-started/introduction-to-aspnet-identity).
   This might make it easier for the user identity to be part of a larger Entity Framework database schema.
-  This also might not make sense if ASP.NET Identity 
+  This might be chanllenging to make smooth, as ASP.NET Identity treats its cookie as the source of user identity
+  and this is not currently customizable.
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).
 * Add the option to validate the audience of the JWT in the alternate header.
 * Add options for customizing how the username is chosen.
@@ -32,6 +33,7 @@ Currently implemented features:
   * See also [these docs](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/additional-claims?view=aspnetcore-7.0)
     for inspiration.
 * Add options for customizing how IAP access levels are translated into roles.
+  * Disable translating to roles
   * Strip prefix
   * Custom delegate on the event object for transforming.
 * Add NativeAOT / Trim compatibility. This might require using a different library to validate the JWT.
