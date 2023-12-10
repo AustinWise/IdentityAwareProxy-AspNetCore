@@ -1,12 +1,10 @@
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text.Encodings.Web;
 using Google.Apis.Auth;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace Austin.IdentityAwareProxy;
 
@@ -62,11 +60,12 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
 
         try
         {
-            var claims = new List<Claim>(2 + jwtPayload.GoogleInfo?.AccessLevels?.Count ?? 0);
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer));
+            var claimsIdentity = new ClaimsIdentity(Scheme.Name, ClaimTypes.NameIdentifier, ClaimTypes.Role);
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, jwtPayload.Subject, ClaimValueTypes.String, jwtPayload.Issuer, jwtPayload.Issuer, claimsIdentity));
             if (!string.IsNullOrEmpty(jwtPayload.Email))
             {
-                claims.Add((new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer)));
+                // TODO: ASP.NET identity uses ClaimValueTypes.String for Email claims, should we?
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Email, jwtPayload.Email, ClaimValueTypes.Email, jwtPayload.Issuer, jwtPayload.Issuer, claimsIdentity));
             }
             if (Options.MapAccessPolicyToRoles.HasValue && jwtPayload.GoogleInfo?.AccessLevels is not null)
             {
@@ -75,11 +74,10 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
                     var level = IapAccessLevel.Parse(levelStr);
                     if (level.PolicyId == Options.MapAccessPolicyToRoles.Value)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, level.Level, ClaimValueTypes.String, jwtPayload.Issuer));
+                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, level.Level, ClaimValueTypes.String, jwtPayload.Issuer, jwtPayload.Issuer, claimsIdentity));
                     }
                 }
             }
-            var claimsIdentity = new ClaimsIdentity(claims, Scheme.Name, ClaimTypes.NameIdentifier, ClaimTypes.Role);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var properties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(claimsPrincipal, properties, Scheme.Name);
