@@ -46,7 +46,7 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             }
             catch (InvalidJwtException ex)
             {
-                Logger.InvalidJwt(ex);
+                Logger.InvalidJwt(jwtStr, ex);
                 return AuthenticateResult.Fail(ex);
             }
         }

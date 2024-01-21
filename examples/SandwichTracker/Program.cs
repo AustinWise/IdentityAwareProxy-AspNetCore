@@ -9,7 +9,10 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    builder.Services.AddIap();
+    builder.Services.AddIap(o =>
+    {
+        o.TrustedAudiences.Add(builder.Configuration["IAP_AUD"]!);
+    });
     builder.Services.AddAuthentication().AddIap();
     builder.Services.AddGoogleDiagnosticsForAspNetCore("72643967898");
 }
