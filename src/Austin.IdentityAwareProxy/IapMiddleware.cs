@@ -81,7 +81,7 @@ namespace Austin.IdentityAwareProxy
             }
             catch (InvalidJwtException ex)
             {
-                _logger.InvalidJwt(ex);
+                _logger.InvalidJwt(jwtStr, ex);
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }

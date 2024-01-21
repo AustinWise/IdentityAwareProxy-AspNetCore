@@ -11,8 +11,8 @@ namespace Austin.IdentityAwareProxy
         [LoggerMessage(2, LogLevel.Critical, "The request was missing the IAP header: {header}", EventName = "MissingHeader")]
         public static partial void MissingHeader(this ILogger logger, string header);
 
-        [LoggerMessage(3, LogLevel.Critical, "The IAP JWT was invalid.", EventName = "InvalidJwt")]
-        public static partial void InvalidJwt(this ILogger logger, Exception exception);
+        [LoggerMessage(3, LogLevel.Critical, "The IAP JWT was invalid: {jwtStr}", EventName = "InvalidJwt")]
+        public static partial void InvalidJwt(this ILogger logger, string? jwtStr, Exception exception);
 
         [LoggerMessage(4, LogLevel.Critical, "The IAP JWT was invalid, but unexpectedly contains an unauthenticated user. If you want to allow unauthenticated users, set the AllowPublicAccess setting to true.", EventName = "UnexpectedUnauthenticatedUser")]
         public static partial void UnexpectedUnauthenticatedUser(this ILogger logger);
