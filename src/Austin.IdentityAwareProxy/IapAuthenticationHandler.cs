@@ -27,7 +27,14 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
             var iapFeature = Context.Features.Get<IIapFeature>();
             if (iapFeature is null)
             {
-                throw new InvalidOperationException("Please make sure the call UseIap() to configure the IapMiddleWare. This should be the first thing done after calling WebApplicationBuilder.Build and UseHealthChecks.");
+                if (Context.Features.Get<IapSimulatorMarker>() is null)
+                {
+                    throw new InvalidOperationException("Please make sure the call UseIap() to configure the IapMiddleWare. This should be the first thing done after calling WebApplicationBuilder.Build and UseHealthChecks.");
+                }
+                else
+                {
+                    throw new InvalidOperationException("Visit /_iap to configure IAP identity.");
+                }
             }
             jwtPayload = iapFeature.Payload;
         }

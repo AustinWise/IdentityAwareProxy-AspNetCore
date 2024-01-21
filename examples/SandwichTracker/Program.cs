@@ -3,17 +3,14 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsDevelopment())
+builder.Services.AddIap(o =>
 {
-    // TODO: add support for testing identity
-}
-else
+    o.TrustedAudiences.Add(builder.Configuration["IAP_AUD"]!);
+});
+builder.Services.AddAuthentication().AddIap();
+
+if (!builder.Environment.IsDevelopment())
 {
-    builder.Services.AddIap(o =>
-    {
-        o.TrustedAudiences.Add(builder.Configuration["IAP_AUD"]!);
-    });
-    builder.Services.AddAuthentication().AddIap();
     builder.Services.AddGoogleDiagnosticsForAspNetCore("72643967898");
 }
 
@@ -30,6 +27,7 @@ app.UseHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseIapSimulator();
 }
 else
 {

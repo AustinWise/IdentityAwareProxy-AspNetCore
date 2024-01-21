@@ -22,5 +22,8 @@ namespace Austin.IdentityAwareProxy
 
         [LoggerMessage(6, LogLevel.Debug, "Successfully created IAP principal.", EventName = "SuccessfullyCreatePrincipal")]
         public static partial void SuccessfullyCreatedPrincipal(this ILogger logger);
+
+        [LoggerMessage(7, LogLevel.Critical, "The IAP Simulator is configured and recieved an incoming request from somewhere other than localhost. Do not use the IAP Simulator in production.")]
+        public static partial void SimulatorExposed(this ILogger logger);
     }
 }

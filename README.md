@@ -13,11 +13,11 @@ Currently implemented features:
   * Uses the subject claim of the IAP JWT as a user name (it looks like "accounts.google.com:1234", where 1234 is the user's ID)
   * An email claim containing the user's email address.
   * Access levels are set as the roles for the user.
+* A simulator GUI for simulating IAP when testing locally.
 
 ## TODO
 
 * Actually implement something interesting in the example app.
-* Add an IAP simulator for testing.
 * Consider integrating with
   [ASP.NET Identity](https://learn.microsoft.com/en-us/aspnet/identity/overview/getting-started/introduction-to-aspnet-identity).
   This might make it easier for the user identity to be part of a larger Entity Framework database schema.
