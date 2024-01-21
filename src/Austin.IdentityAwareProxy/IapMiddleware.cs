@@ -3,7 +3,6 @@ using System.Net;
 using Google.Api.Gax;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;

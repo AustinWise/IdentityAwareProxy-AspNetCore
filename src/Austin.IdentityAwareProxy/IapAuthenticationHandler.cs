@@ -12,8 +12,8 @@ public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationO
 {
     private readonly IIapValidator _iapValidator;
 
-    public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IIapValidator iapValidator)
-        : base(options, logger, encoder, clock)
+    public IapAuthenticationHandler(IOptionsMonitor<IapAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, IIapValidator iapValidator)
+        : base(options, logger, encoder)
     {
         _iapValidator = iapValidator;
     }
