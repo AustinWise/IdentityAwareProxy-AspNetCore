@@ -16,13 +16,12 @@ Currently implemented features:
 
 ## TODO
 
-* Check the IP address of the incoming connection if possible.
 * Actually implement something interesting in the example app.
 * Add an IAP simulator for testing.
 * Consider integrating with
   [ASP.NET Identity](https://learn.microsoft.com/en-us/aspnet/identity/overview/getting-started/introduction-to-aspnet-identity).
   This might make it easier for the user identity to be part of a larger Entity Framework database schema.
-  This might be chanllenging to make smooth, as ASP.NET Identity treats its cookie as the source of user identity
+  This might be challenging to make smooth, as ASP.NET Identity treats its cookie as the source of user identity
   and this is not currently customizable.
 * Add support [external identities](https://cloud.google.com/iap/docs/enable-external-identities).
 * Add the option to validate the audience of the JWT in the alternate header.
@@ -37,3 +36,5 @@ Currently implemented features:
   * Strip prefix
   * Custom delegate on the event object for transforming.
 * Add NativeAOT / Trim compatibility. This might require using a different library to validate the JWT.
+* Test on App Engine, including checking what IP address the requests come from and filtering out
+  bad IP address in `IapMiddleware`.
