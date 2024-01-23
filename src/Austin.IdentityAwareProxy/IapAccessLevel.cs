@@ -27,7 +27,7 @@ public partial class IapAccessLevel
 
     public IapAccessLevel(long policyId, string level)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(level);
+        ArgumentException.ThrowIfNullOrEmpty(level);
 
         this.PolicyId = policyId;
         this.Level = level;
