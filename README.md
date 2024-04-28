@@ -40,3 +40,10 @@ Currently implemented features:
   bad IP address in `IapMiddleware`.
 * Make the simulator GUI more attractive. It should probably also leverage Razor rather than string
   concatenation.
+* Consider whether there it is possible to create a common abstraction for IAP and similar services.
+  Similar services include:
+  * [Cloudflare Access](https://developers.cloudflare.com/learning-paths/zero-trust-web-access/migrate-applications/consume-jwt/)
+  * [AWS Verified Access](https://docs.aws.amazon.com/verified-access/latest/ug/user-claims-passing.html)
+  * [Microsoft Entra application proxy](https://learn.microsoft.com/en-us/entra/identity/app-proxy/application-proxy-configure-single-sign-on-with-headers) -
+    they don't really appear to have an IAP equivalent. This is the closest, which uses unsigned-headers
+    and is targeted more at on-premise apps.
