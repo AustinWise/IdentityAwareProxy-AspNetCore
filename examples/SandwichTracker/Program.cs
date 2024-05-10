@@ -6,6 +6,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+JsonWebKeySet keySet;
+using (var client = new HttpClient())
+{
+    // TODO: may refresh periodically
+    string keyJson = await client.GetStringAsync("https://www.gstatic.com/iap/verify/public_key-jwk");
+    keySet = new JsonWebKeySet(keyJson);
+}
+IEnumerable<SecurityKey> SigningKeyResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters)
+{
+    foreach (JsonWebKey key in keySet.Keys)
+    {
+        if (key.Kid == kid)
+        {
+            return [key];
+        }
+    }
+    return [];
+}
+
+
 /*
 builder.Services.AddIap(o =>
 {
@@ -22,14 +42,11 @@ builder.Services.AddAuthentication()
                 return Task.CompletedTask;
             }
         };
-        o.Configuration = new OpenIdConnectConfiguration()
-        {
-            JwksUri = "https://www.gstatic.com/iap/verify/public_key-jwk",
-        };
         o.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidIssuer = "https://cloud.google.com/iap",
             ValidAudience = "/projects/72643967898/global/backendServices/425310316444854238",
+            IssuerSigningKeyResolver = SigningKeyResolver,
         };
     });
 
