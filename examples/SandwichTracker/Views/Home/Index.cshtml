@@ -42,6 +42,29 @@
     </tbody>
 </table>
 
+
+<h3>Claims</h3>
+
+<table class="user-info">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (System.Security.Claims.Claim claim in User.Claims)
+        {
+            <tr>
+                <td>@claim.Type</td>
+                <td>@claim.Value</td>
+            </tr>
+        }
+        <tr>
+        </tr>
+    </tbody>
+</table>
+
 <h3>Roles</h3>
 
 Is in role:
