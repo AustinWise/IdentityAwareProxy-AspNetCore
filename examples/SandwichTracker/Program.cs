@@ -2,6 +2,7 @@ using Google.Cloud.Diagnostics.AspNetCore3;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,12 @@ builder.Services.AddAuthentication().AddIap();
 */
 builder.Services.AddAuthentication()
     .AddJwtBearer(o => {
-        o.Events.OnMessageReceived = ctx => {
-            ctx.Token = ctx.HttpContext.Request.Headers["x-goog-iap-jwt-assertion"];
-            return Task.CompletedTask;
+        o.Events = new JwtBearerEvents()
+        {
+            OnMessageReceived = ctx => {
+                ctx.Token = ctx.HttpContext.Request.Headers["x-goog-iap-jwt-assertion"];
+                return Task.CompletedTask;
+            }
         };
         o.Configuration = new OpenIdConnectConfiguration()
         {
