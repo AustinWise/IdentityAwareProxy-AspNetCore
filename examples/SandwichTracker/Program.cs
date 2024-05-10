@@ -1,13 +1,29 @@
 using Google.Cloud.Diagnostics.AspNetCore3;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/*
 builder.Services.AddIap(o =>
 {
     o.TrustedAudiences.Add(builder.Configuration["IAP_AUD"]!);
 });
 builder.Services.AddAuthentication().AddIap();
+*/
+builder.Services.AddAuthentication()
+    .AddJwtBearer(o => {
+        o.Configuration = new OpenIdConnectConfiguration()
+        {
+            JwksUri = "https://www.gstatic.com/iap/verify/public_key-jwk",
+        };
+        o.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidIssuer = "https://cloud.google.com/iap",
+            ValidAudience = "/projects/72643967898/global/backendServices/425310316444854238",
+        };
+    });
 
 if (!builder.Environment.IsDevelopment())
 {
@@ -31,9 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseIap();
+    // app.UseIap();
 
-/*
     // UseForwardedHeaders must be after UseIap for the IP checking in in UseIap to work correctly.
     // UseForwardedHeaders is needed so that UseHsts knows we are actually using HTTPS and will send the header.
     var forwardOpts = new ForwardedHeadersOptions()
@@ -47,7 +62,6 @@ else
     forwardOpts.KnownNetworks.Clear();
     forwardOpts.KnownProxies.Clear();
     app.UseForwardedHeaders(forwardOpts);
-*/
 
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();

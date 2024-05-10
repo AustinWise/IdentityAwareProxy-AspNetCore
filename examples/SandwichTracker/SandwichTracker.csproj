@@ -34,6 +34,7 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Cloud.Diagnostics.AspNetCore3" Version="5.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
     </ItemGroup>
 
 </Project>
