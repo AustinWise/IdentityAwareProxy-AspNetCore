@@ -14,6 +14,10 @@ builder.Services.AddAuthentication().AddIap();
 */
 builder.Services.AddAuthentication()
     .AddJwtBearer(o => {
+        o.Events.OnMessageReceived = ctx => {
+            ctx.Token = ctx.HttpContext.Request.Headers["x-goog-iap-jwt-assertion"];
+            return Task.CompletedTask;
+        };
         o.Configuration = new OpenIdConnectConfiguration()
         {
             JwksUri = "https://www.gstatic.com/iap/verify/public_key-jwk",
