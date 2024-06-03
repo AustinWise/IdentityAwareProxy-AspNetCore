@@ -27,12 +27,17 @@ class IapConfigureOptions : IConfigureOptions<IapOptions>
         {
             audiences.Add(audience);
         }
-        foreach(var aud in audiences)
+        foreach (var aud in audiences)
         {
             options.TrustedAudiences.Add(aud!);
         }
 
         options.AllowPublicAccess = TryGetBool(configSection, nameof(options.AllowPublicAccess), options.AllowPublicAccess);
+
+        if (options.TrustedAudiences.Count == 0)
+        {
+            throw new Exception("No trusted audiences configured.");
+        }
     }
 
     private static bool TryGetBool(IConfiguration config, string key, bool defaultValue)

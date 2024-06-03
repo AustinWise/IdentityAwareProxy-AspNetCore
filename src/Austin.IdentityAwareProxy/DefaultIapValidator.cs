@@ -12,6 +12,10 @@ public class DefaultIapValidator : IIapValidator
         {
             throw new InvalidJwtException($"Expected exactly one JWT header, got {jwtHeader.Count}");
         }
+        if (trustedAudiences.Length == 0)
+        {
+            throw new InvalidOperationException("Expected 1 or more trusted audiences.");
+        }
 
         string? jwt = jwtHeader[0];
 
@@ -26,8 +30,6 @@ public class DefaultIapValidator : IIapValidator
         {
             valSettings.TrustedAudiences.Add(aud);
         }
-
-        // TODO: consider enforcing the requirement for at least one audience here?
 
         return await JsonWebSignature.VerifySignedTokenAsync<IapPayload>(jwt, valSettings, ct);
     }

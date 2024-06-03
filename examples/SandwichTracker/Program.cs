@@ -5,7 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIap(o =>
 {
-    o.TrustedAudiences.Add(builder.Configuration["IAP_AUD"]!);
+    string? iapAud = builder.Configuration["IAP_AUD"];
+    if (!string.IsNullOrEmpty(iapAud))
+    {
+        o.TrustedAudiences.Add(iapAud);
+    }
 });
 builder.Services.AddAuthentication().AddIap();
 
