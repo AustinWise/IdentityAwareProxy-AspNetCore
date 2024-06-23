@@ -37,7 +37,6 @@ else
 {
     app.UseIap();
 
-/*
     // UseForwardedHeaders must be after UseIap for the IP checking in in UseIap to work correctly.
     // UseForwardedHeaders is needed so that UseHsts knows we are actually using HTTPS and will send the header.
     var forwardOpts = new ForwardedHeadersOptions()
@@ -51,7 +50,6 @@ else
     forwardOpts.KnownNetworks.Clear();
     forwardOpts.KnownProxies.Clear();
     app.UseForwardedHeaders(forwardOpts);
-*/
 
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
