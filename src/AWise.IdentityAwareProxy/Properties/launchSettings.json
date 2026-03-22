@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Austin.IdentityAwareProxy": {
+    "AWise.IdentityAwareProxy": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
