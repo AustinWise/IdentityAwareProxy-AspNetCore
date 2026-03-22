@@ -26,11 +26,15 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// The health check should be the only thing that is processed before the IAP.
+// The health check need to come before IAP because health checks don't have the IAP header.
+// And the IAP middleware will block requests without the IAP header.
 app.UseHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {
+    // Simulates IAP by injecting a fake user. This can be configured at /_iap .
+    // It will block any request that does not come from local host in an attempt to prevent you
+    // from shipping the simulator in production.
     app.UseIapSimulator();
 }
 else
@@ -47,7 +51,7 @@ else
     };
     // The IAP middleware already validated the IP address of the upstream and the IAP JWT token.
     // So remove the restriction that only localhost can forward.
-    forwardOpts.KnownNetworks.Clear();
+    forwardOpts.KnownIPNetworks.Clear();
     forwardOpts.KnownProxies.Clear();
     app.UseForwardedHeaders(forwardOpts);
 

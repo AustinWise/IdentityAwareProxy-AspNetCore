@@ -8,15 +8,98 @@ for [Google Cloud Identity Aware Proxy](https://cloud.google.com/iap).
 
 Currently implemented features:
 
-* Blocks all connections that have a missing or invalid IAP JWT.
 * Sets the HttpContext.User to a principal that:
   * Uses the subject claim of the IAP JWT as a user name (it looks like "accounts.google.com:1234", where 1234 is the user's ID)
   * An email claim containing the user's email address.
   * Access levels are set as the roles for the user.
 * A simulator GUI for simulating IAP when testing locally.
+* Blocks all requests that have a missing or invalid IAP JWT.
+* On GCE and GKE, blocks all requests from IP addresses other the Google Cloud Load Balancer IP range.
+  On Cloud Run inauthentic JWT headers are stripped before we see them, so we don't have to worry
+  about IP checking.
+
+## Usage
+
+A reference to the Nuget package.
+
+In your program, add the IAP services and authentication to the `WebApplicationBuilder`:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddIap();
+builder.Services.AddAuthentication().AddIap();
+```
+
+Once you create the `WebApplication`, call `UseIap()` to insert the
+
+```csharp
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+// The health check need to come before IAP because health checks don't have the IAP header.
+// And the IAP middleware will block requests without the IAP header.
+app.UseHealthChecks("/health");
+
+if (app.Environment.IsDevelopment())
+{
+    // Simulates IAP by injecting a fake user. This can be configured at /_iap .
+    // It will block any request that does not come from local host in an attempt to prevent you
+    // from shipping the simulator in production.
+    app.UseIapSimulator();
+}
+else
+{
+    app.UseIap();
+
+    // UseForwardedHeaders must be after UseIap for the IP checking in in UseIap to work correctly.
+    // UseForwardedHeaders is needed so that UseHsts knows we are actually using HTTPS and will send the header.
+    var forwardOpts = new ForwardedHeadersOptions()
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        // As documented here, second from the end is the actual client IP address: https://cloud.google.com/load-balancing/docs/https#x-forwarded-for_header
+        ForwardLimit = 2,
+    };
+    // The IAP middleware already validated the IP address of the upstream and the IAP JWT token.
+    // So remove the restriction that only localhost can forward.
+    forwardOpts.KnownIPNetworks.Clear();
+    forwardOpts.KnownProxies.Clear();
+    app.UseForwardedHeaders(forwardOpts);
+
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+// Further handlers...
+```
+
+In your `appsettings.json`, setup the authentication and add the JWT audience code. You can find the
+JWT audience code in the [Google Cloud Console](https://console.cloud.google.com/security/iap). You
+can use more than one code if your application is published behind multiple IAP instances.
+You can set `AllowPublicAccess` to `true` if you are using the
+[public access feature](https://docs.cloud.google.com/iap/docs/managing-access#public_access).
+
+```json
+{
+    "Authentication": {
+        "DefaultScheme": "IAP",
+        "Schemes": {
+            "IAP": {
+            }
+        }
+    },
+    "IdentityAwareProxy": {
+        "AllowPublicAccess": false,
+        "TrustedAudiences": [
+            "/projects/72643967898/global/backendServices/1079754107036193628"
+        ]
+    }
+}
+```
 
 ## TODO
 
+* Automated testing.
 * Actually implement something interesting in the example app.
 * Consider integrating with
   [ASP.NET Identity](https://learn.microsoft.com/en-us/aspnet/identity/overview/getting-started/introduction-to-aspnet-identity).
