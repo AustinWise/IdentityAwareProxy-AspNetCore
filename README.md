@@ -20,7 +20,7 @@ Currently implemented features:
 
 ## Usage
 
-A reference to the Nuget package.
+Add reference to the [Nuget package](https://www.nuget.org/packages/AWise.IdentityAwareProxy).
 
 In your program, add the IAP services and authentication to the `WebApplicationBuilder`:
 
