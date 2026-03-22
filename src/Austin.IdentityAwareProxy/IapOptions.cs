@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authentication;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public class IapOptions
 {

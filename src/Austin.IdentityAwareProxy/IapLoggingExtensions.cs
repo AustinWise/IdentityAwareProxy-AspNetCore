@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging;
 
-namespace Austin.IdentityAwareProxy
+namespace AWise.IdentityAwareProxy
 {
     internal static partial class IapLoggingExtensions
     {

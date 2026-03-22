@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Austin.IdentityAwareProxy.Properties {
+namespace AWise.IdentityAwareProxy.Properties {
     using System;
     
     

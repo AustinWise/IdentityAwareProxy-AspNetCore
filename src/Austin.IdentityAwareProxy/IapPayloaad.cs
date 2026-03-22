@@ -1,7 +1,7 @@
 using Google.Apis.Auth;
 using Newtonsoft.Json;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public class GoogleInfo
 {

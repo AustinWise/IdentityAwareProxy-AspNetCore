@@ -1,4 +1,4 @@
-﻿using Austin.IdentityAwareProxy;
+﻿using AWise.IdentityAwareProxy;
 
 namespace Microsoft.AspNetCore.Builder;
 

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 class IapConfigureOptions : IConfigureOptions<IapOptions>
 {

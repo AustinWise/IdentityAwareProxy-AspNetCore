@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public partial class IapAccessLevel
 {

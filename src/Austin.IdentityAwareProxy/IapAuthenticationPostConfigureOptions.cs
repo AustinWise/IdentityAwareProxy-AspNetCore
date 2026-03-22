@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 class IapAuthenticationPostConfigureOptions : IPostConfigureOptions<IapAuthenticationOptions>
 {

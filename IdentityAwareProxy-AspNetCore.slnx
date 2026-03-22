@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="examples/SandwichTracker/SandwichTracker.csproj" />
+  <Project Path="src/Austin.IdentityAwareProxy/AWise.IdentityAwareProxy.csproj" />
+</Solution>

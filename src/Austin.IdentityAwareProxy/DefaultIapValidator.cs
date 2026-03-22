@@ -2,7 +2,7 @@
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Primitives;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public class DefaultIapValidator : IIapValidator
 {

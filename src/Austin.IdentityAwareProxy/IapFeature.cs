@@ -1,4 +1,4 @@
-﻿namespace Austin.IdentityAwareProxy;
+﻿namespace AWise.IdentityAwareProxy;
 
 internal class IapFeature : IIapFeature
 {

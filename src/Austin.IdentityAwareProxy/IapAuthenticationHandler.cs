@@ -6,7 +6,7 @@ using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public class IapAuthenticationHandler : AuthenticationHandler<IapAuthenticationOptions>
 {

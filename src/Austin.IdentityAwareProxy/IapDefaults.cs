@@ -1,4 +1,4 @@
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 public static class IapDefaults
 {

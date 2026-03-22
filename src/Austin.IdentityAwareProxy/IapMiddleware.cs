@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace Austin.IdentityAwareProxy
+namespace AWise.IdentityAwareProxy
 {
     public class IapMiddleware
     {

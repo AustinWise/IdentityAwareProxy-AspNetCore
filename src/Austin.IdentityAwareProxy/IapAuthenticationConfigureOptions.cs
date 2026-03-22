@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using System.Globalization;
 
-namespace Austin.IdentityAwareProxy;
+namespace AWise.IdentityAwareProxy;
 
 class IapAuthenticationConfigureOptions : IConfigureNamedOptions<IapAuthenticationOptions>
 {
