@@ -1,3 +1,6 @@
 {
-    "dotnet.defaultSolution": "IdentityAwareProxy-AspNetCore.sln"
+    "dotnet.defaultSolution": "IdentityAwareProxy-AspNetCore.sln",
+    "cSpell.words": [
+        "trimmable"
+    ]
 }

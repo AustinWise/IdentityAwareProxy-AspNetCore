@@ -36,6 +36,8 @@ Currently implemented features:
   * Strip prefix
   * Custom delegate on the event object for transforming.
 * Add NativeAOT / Trim compatibility. This might require using a different library to validate the JWT.
+  [Microsoft.AspNetCore.Authentication.JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer)
+  for example is trimmable.
 * Test on App Engine, including checking what IP address the requests come from and filtering out
   bad IP address in `IapMiddleware`.
 * Make the simulator GUI more attractive. It should probably also leverage Razor rather than string
