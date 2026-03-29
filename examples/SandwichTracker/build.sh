@@ -10,4 +10,6 @@ then
 fi
 
 dotnet publish --os linux --arch x64 /t:PublishContainer -c Release -p:ContainerImageTag=$1
+# If this command fails with an "Unauthenticated request" message, run:
+#   gcloud auth configure-docker us-central1-docker.pkg.dev
 docker push us-central1-docker.pkg.dev/test-iap-491718/sandwich-apps/sandwichtracker:$1
