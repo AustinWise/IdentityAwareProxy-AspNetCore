@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <ContainerImageName>us-central1-docker.pkg.dev/test-iap-379718/sandwich-apps/sandwichtracker</ContainerImageName>
+        <ContainerImageName>us-central1-docker.pkg.dev/test-iap-491718/sandwich-apps/sandwichtracker</ContainerImageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(CNB_STACK_ID)' != ''">
