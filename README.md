@@ -123,8 +123,11 @@ You can set `AllowPublicAccess` to `true` if you are using the
   for example is trimmable.
 * Test on App Engine, including checking what IP address the requests come from and filtering out
   bad IP address in `IapMiddleware`.
-* Make the simulator GUI more attractive. It should probably also leverage Razor rather than string
-  concatenation.
+* Improve simulator:
+  * Make the simulator GUI more attractive and use a nicer templating system than string concatenation.
+  * Add automatic redirection back the source page.
+  * Implement support for `DO_SESSION_REFRESH` and `SESSION_REFRESHER`.
+  * Write some end to end tests to verify this function the same as the real IAP.
 * Consider whether there it is possible to create a common abstraction for IAP and similar services.
   Similar services include:
   * [Cloudflare Access](https://developers.cloudflare.com/learning-paths/zero-trust-web-access/migrate-applications/consume-jwt/)
