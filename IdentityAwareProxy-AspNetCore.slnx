@@ -4,4 +4,5 @@
   </Folder>
   <Project Path="examples/SandwichTracker/SandwichTracker.csproj" />
   <Project Path="src/AWise.IdentityAwareProxy/AWise.IdentityAwareProxy.csproj" />
+  <Project Path="tests/UnitTests/AWise.IdentityAwareProxy.UnitTests.csproj" />
 </Solution>
