@@ -1,3 +1,5 @@
+# This workflow is managed by gh actions-lock.
+
 name: Publish to NuGet
 
 on:
@@ -13,11 +15,11 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v6.1.0
       with:
         fetch-depth: 0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v5.4.0
       with:
         dotnet-version: 10.0.x
     - name: Verify commit exists in origin/main
@@ -32,7 +34,7 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output . src/AWise.IdentityAwareProxy/AWise.IdentityAwareProxy.csproj
     - name: NuGet login
-      uses: NuGet/login@v1
+      uses: NuGet/login@v1.2.0
       id: login
       with:
         user: ${{ secrets.NUGET_USER }}
